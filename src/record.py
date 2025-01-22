@@ -25,3 +25,5 @@ class Record:
                 f"{self.facility_address_3}, {self.max_children}, {self.max_infants}, "
                 f"{self.max_preschool}, {self.max_school_age}, {self.language}, "
                 f"{self.operator_id}, {self.designated_facility}")
+
+

@@ -1,3 +1,13 @@
+# ------------------------------------------------------
+# Filename: main.py
+# Author: Nibedita Bhowmick
+# Date: 2024-06-11
+# Version: 1.0
+# Description:
+#     This script loads data from a CSV file, processes it
+#     into Record objects, and displays a subset of the records.
+# ------------------------------------------------------
+
 
 import csv
 from record import Record
@@ -32,7 +42,9 @@ def load_data(file_path):
 
 
 if __name__ == "__main__":
-    dataset_path = "C:\Licensed_Early_Learning_and_Childcare_Facilities.csv"  # Adjust filename
+    display_full_name()
+    dataset_path = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+
     records = load_data(dataset_path)
 
     # Display records

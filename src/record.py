@@ -1,3 +1,16 @@
+# ------------------------------------------------------
+# Filename: record.py
+# Author: Nibedita Bhowmick
+# Date: 2024-06-11
+# Version: 1.0
+# Description:
+#     This script defines the Record class, which represents
+#     a childcare facility with various attributes. The class
+#     includes an initializer and a string representation method
+#     for easy printing of record details.
+# ------------------------------------------------------
+
+
 class Record:
     def __init__(self, region, district, license_number, facility_name, facility_type,
                  facility_address_1, facility_address_2, facility_address_3,

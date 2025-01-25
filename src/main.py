@@ -17,8 +17,7 @@ def display_full_name():
     Prints the author's full name.
 
     This function is used to display the full name of the script's author.
-    It serves as an example of a standalone function and is typically called
-    at the beginning of the script.
+
     """
     full_name = "Nibedita Bhowmick"
     print(f"\nAuthor: {full_name}")

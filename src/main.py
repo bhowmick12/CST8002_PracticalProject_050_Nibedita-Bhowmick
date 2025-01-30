@@ -23,7 +23,8 @@ def display_full_name():
     print(f"\nAuthor: {full_name}")
 
 
-def load_data(file_path):
+def load_data(file_path,max_records):
+
     """
     Reads the dataset from the specified file path and stores records in a list.
 
@@ -47,7 +48,10 @@ def load_data(file_path):
             reader = csv.reader(file)
             headers = next(reader)  # Skip the header row if present
 
-            for row in reader:
+            for i, row in enumerate(reader):
+                if i >= max_records:
+                    break  # Stop loading records after reaching the limit
+            #for row in reader:
                 # Validate that the row has at least 15 fields
                 if len(row) >= 15:
                     # Create a Record object using the first 15 columns of the row
@@ -83,8 +87,9 @@ if __name__ == "__main__":
     dataset_path = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
 
     # Load records from the dataset
-    records = load_data(dataset_path)
+    records = load_data(dataset_path, max_records=100)
 
     # Display the first 8 records from the dataset
     for record in records[:8]:  # Adjust the slice to control the number of records displayed
         print(record)
+2

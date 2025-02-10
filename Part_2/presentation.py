@@ -45,7 +45,7 @@ def main():
 
             else:
 
-                for i, record in enumerate(data_manager.records[:10], start=1):  # Limit to 100 records
+                for i, record in enumerate(data_manager.records[:100], start=1):  # Limit to 100 records
 
                     print(f"{i}. {record}")
 

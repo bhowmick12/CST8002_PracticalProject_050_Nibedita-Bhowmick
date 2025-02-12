@@ -1,61 +1,71 @@
-from business import DataManager
-from record import Record
+# ------------------------------------------------------
+# Filename: presentation.py
+# Author: Nibedita Bhowmick
+# Date: 2025-02-12
+# Version: 1.1
+# Description:
+#     This script manages records for a facility management system.
+#     It allows the user to load, save, display, add, update, and delete records.
+# ------------------------------------------------------
 
+# Importing necessary modules
+from business import DataManager  # Manages the data (loading, saving, etc.)
+from record import Record  # Represents a single record
+
+# Function to display the main menu to the user
 def display_menu():
-    print("1. Load Data")
-    print("2. Save Data")
-    print("3. Display Records")
-    print("4. Add New Record")
-    print("5. Update Record")
-    print("6. Delete Record")
-    print("7. Exit")
+    print("1. Load Data")  # Option to load data
+    print("2. Save Data")  # Option to save data
+    print("3. Display Records")  # Option to display all records
+    print("4. Add New Record")  # Option to add a new record
+    print("5. Update Record")  # Option to update an existing record
+    print("6. Delete Record")  # Option to delete an existing record
+    print("7. Exit")  # Option to exit the program
 
+# Function to display the full name of the program author
 def display_full_name():
     print("Program by Nibedita Bhowmick")
 
+# Main function that runs the program
 def main():
-    data_manager = DataManager()
+    data_manager = DataManager()  # Initialize DataManager object to handle records
 
+    # Continuously display the menu until the user chooses to exit
     while True:
-        display_full_name()
-        display_menu()
-        choice = input("Select an option: ").strip()
+        display_full_name()  # Display author information
+        display_menu()  # Display menu options
+        choice = input("Select an option: ").strip()  # Get user input for the option
 
+        # Handle 'Load Data' option
         if choice == "1":
-            file_path = input("Enter the CSV file path: ").strip()
+            file_path = input("Enter the CSV file path: ").strip()  # Ask for file path
             try:
-                data_manager.load_records(file_path)
-                print("Data loaded successfully.")
-            except Exception as e:
+                data_manager.load_records(file_path)  # Load records from the file
+                print("Data loaded successfully.")  # Success message
+            except Exception as e:  # Handle exceptions during file loading
                 print(f"Error loading file: {e}")
 
+        # Handle 'Save Data' option
         elif choice == "2":
             try:
-                data_manager.save_records()
-                print("Data saved successfully.")
-            except Exception as e:
+                data_manager.save_records()  # Save records to the file
+                print("Data saved successfully.")  # Success message
+            except Exception as e:  # Handle exceptions during saving
                 print(f"Error saving data: {e}")
 
-
+        # Handle 'Display Records' option
         elif choice == "3":
-
+            # Check if there are any records to display
             if not data_manager.records:
-
-                print("No records available.")
-
+                print("No records available.")  # No records available message
             else:
-
-                for i, record in enumerate(data_manager.records[:100], start=1):  # Limit to 100 records
-
-                    print(f"{i}. {record}")
-
-                    if i % 10 == 0:
+                # Display up to 100 records
+                for i, record in enumerate(data_manager.records[:100], start=1):
+                    print(f"{i}. {record}")  # Print each record
+                    if i % 10 == 0:  # Print author name after every 10 records
                         display_full_name()
 
-
-
-
-
+        # Handle 'Add New Record' option
         elif choice == "4":
             # Collect user input for a new record
             region = input("Region: ").strip()
@@ -74,7 +84,7 @@ def main():
             operator_id = input("Operator ID: ").strip()
             designated_facility = input("Designated Facility (Yes/No): ").strip().lower()
 
-            # Convert "Yes" or "No" to boolean values
+            # Convert "Yes" or "No" to boolean values for designated_facility
             if designated_facility == "yes":
                 designated_facility = True
             elif designated_facility == "no":
@@ -83,8 +93,7 @@ def main():
                 print("Error: Designated Facility must be 'Yes' or 'No'.")
                 continue
 
-
-            # Convert numerical values safely
+            # Convert numerical fields safely to integers
             try:
                 max_children = int(max_children)
                 max_infants = int(max_infants)
@@ -94,8 +103,7 @@ def main():
                 print("Error: Max values must be numbers.")
                 continue
 
-
-            # Create and add new record
+            # Create and add the new record
             new_record = Record(
                 region, district, license_number, facility_name, facility_type,
                 facility_address_1, facility_address_2, facility_address_3,
@@ -103,17 +111,20 @@ def main():
                 language, operator_id, designated_facility
             )
 
-            data_manager.add_record(new_record)
+            data_manager.add_record(new_record)  # Add the new record to the data manager
             print("New record added successfully.")
 
+        # Handle 'Update Record' option
         elif choice == "5":
             try:
+                # Get the index of the record to update
                 index = int(input("Enter record index to update: ")) - 1
                 if 0 <= index < len(data_manager.records):
-                    # Gather updated details
+                    # Gather updated details from the user
                     print("Enter updated details (leave blank to keep existing value).")
-                    existing_record = data_manager.records[index]
+                    existing_record = data_manager.records[index]  # Get existing record
 
+                    # Collect inputs for updated record details
                     region = input(f"Region [{existing_record.region}]: ").strip() or existing_record.region
                     district = input(f"District [{existing_record.district}]: ").strip() or existing_record.district
                     license_number = input(f"License_Number [{existing_record.license_number}]: ").strip() or existing_record.license_number
@@ -140,6 +151,7 @@ def main():
                         print("Error: Max values must be numbers.")
                         continue
 
+                    # Create and update the record
                     updated_record = Record(
                         region, district, license_number, facility_name, facility_type,
                         facility_address_1, facility_address_2, facility_address_3,
@@ -147,28 +159,31 @@ def main():
                         language, operator_id, designated_facility
                     )
 
-                    data_manager.update_record(index, updated_record)
+                    data_manager.update_record(index, updated_record)  # Update the record in data manager
                     print("Record updated successfully.")
                 else:
-                    print("Error: Index out of range.")
+                    print("Error: Index out of range.")  # Handle invalid index input
             except ValueError:
-                print("Error: Invalid index.")
+                print("Error: Invalid index.")  # Handle invalid input for index
 
+        # Handle 'Delete Record' option
         elif choice == "6":
             try:
-                data_manager.save_records()
+                data_manager.save_records()  # Save any changes made
                 print("Data saved successfully.")
             except Exception as e:
                 print(f"Error saving data: {e}")
-            print("Exiting program.")
+            print("Exiting program.")  # Print exit message
             break
 
+        # Handle 'Exit' option
         elif choice == "7":
-            print("Exiting program.")
+            print("Exiting program.")  # Print exit message
             break
 
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice. Please try again.")  # Handle invalid input
 
+# Run the program if this file is executed directly
 if __name__ == "__main__":
     main()

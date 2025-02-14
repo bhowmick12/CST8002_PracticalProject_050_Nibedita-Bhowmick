@@ -15,7 +15,7 @@ from persistence import load_data, save_data, generate_output_filename
 from record import Record
 
 
-class DataManager:
+class Business:
     """
     The DataManager class is responsible for managing a collection of records.
     It provides methods to load, save, add, update, delete, and retrieve records.

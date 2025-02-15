@@ -37,6 +37,30 @@ def main():
         display_menu()  # Display menu options
         choice = input("Select an option: ").strip()  # Get user input for the option
 
+        # Handle 'Load Data' option
+        if choice == "1":
+            file_path  = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+            #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
+
+            # file_path = input("Enter the CSV file path: ").strip()  # Ask for file path
+            try:
+                data_manager.load_records(file_path)  # Load records from the file
+                print("Data loaded successfully.")  # Success message
+            except Exception as e:  # Handle exceptions during file loading
+                print(f"Error loading file: {e}")
+
+                # Handle 'Display Records' option
+
+        elif choice == "2":
+                # Check if there are any records to display
+                if not data_manager.records:
+                    print("No records available.")  # No records available message
+                else:
+                    # Display up to 100 records
+                    for i, record in enumerate(data_manager.records[:100], start=1):
+                        print(f"{i}. {record}")  # Print each record
+                        if i % 10 == 0:  # Print author name after every 10 records
+                            display_full_name()
 
 # Run the program if this file is executed directly
 if __name__ == "__main__":

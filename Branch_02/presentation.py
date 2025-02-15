@@ -40,6 +40,7 @@ def main():
         # Handle 'Load Data' option
         if choice == "1":
             file_path  = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+            #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test3.csv"
             #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
 
            #file_path = input("Enter the CSV file path: ").strip()  # Ask for file path
@@ -63,7 +64,7 @@ def main():
                 print("No records available.")  # No records available message
             else:
                 # Display up to 100 records
-                for i, record in enumerate(data_manager.records[:20], start=1):
+                for i, record in enumerate(data_manager.records[:100], start=1):
                     print(f"{i}. {record}")  # Print each record
                     if i % 10 == 0:  # Print author name after every 10 records
                         display_full_name()

@@ -62,6 +62,130 @@ def main():
                         if i % 10 == 0:  # Print author name after every 10 records
                             display_full_name()
 
+                # Handle 'Add New Record' option
+
+        elif choice == "3":
+                # Collect user input for a new record
+                region = input("Region: ").strip()
+                district = input("District: ").strip()
+                license_number = input("License_number: ").strip()
+                facility_name = input("Facility Name: ").strip()
+                facility_type = input("Facility Type: ").strip()
+                facility_address_1 = input("Address Line 1: ").strip()
+                facility_address_2 = input("Address Line 2 (Optional): ").strip() or None
+                facility_address_3 = input("Address Line 3 (Optional): ").strip() or None
+                max_children = input("Max Children: ").strip()
+                max_infants = input("Max Infants: ").strip()
+                max_preschool = input("Max Preschool: ").strip()
+                max_school_age = input("Max School Age: ").strip()
+                language = input("Language: ").strip()
+                operator_id = input("Operator ID: ").strip()
+                designated_facility = input("Designated Facility (Yes/No): ").strip().lower()
+
+                # Convert "Yes" or "No" to boolean values for designated_facility
+                if designated_facility == "yes":
+                    designated_facility = True
+                elif designated_facility == "no":
+                    designated_facility = False
+                else:
+                    print("Error: Designated Facility must be 'Yes' or 'No'.")
+                    continue
+
+                # Convert numerical fields safely to integers
+                try:
+                    max_children = int(max_children)
+                    max_infants = int(max_infants)
+                    max_preschool = int(max_preschool)
+                    max_school_age = int(max_school_age)
+                except ValueError:
+                    print("Error: Max values must be numbers.")
+                    continue
+
+                # Create and add the new record
+                new_record = Record(
+                    region, district, license_number, facility_name, facility_type,
+                    facility_address_1, facility_address_2, facility_address_3,
+                    max_children, max_infants, max_preschool, max_school_age,
+                    language, operator_id, designated_facility
+                )
+
+                data_manager.add_record(new_record)  # Add the new record to the data manager
+                print("New record added successfully.")
+
+        # Handle 'Update Record' option
+        elif choice == "4":
+            try:
+                # Get the index of the record to update
+                index = int(input("Enter record index to update: ")) - 1
+                if 0 <= index < len(data_manager.records):
+                    # Gather updated details from the user
+                    print("Enter updated details (leave blank to keep existing value).")
+                    existing_record = data_manager.records[index]  # Get existing record
+
+                    # Collect inputs for updated record details
+                    region = input(f"Region [{existing_record.region}]: ").strip() or existing_record.region
+                    district = input(f"District [{existing_record.district}]: ").strip() or existing_record.district
+                    license_number = input(
+                        f"License_Number [{existing_record.license_number}]: ").strip() or existing_record.license_number
+                    facility_name = input(
+                        f"Facility Name [{existing_record.facility_name}]: ").strip() or existing_record.facility_name
+                    facility_type = input(
+                        f"Facility Type [{existing_record.facility_type}]: ").strip() or existing_record.facility_type
+                    facility_address_1 = input(
+                        f"Address Line 1 [{existing_record.facility_address_1}]: ").strip() or existing_record.facility_address_1
+                    facility_address_2 = input(
+                        f"Address Line 2 [{existing_record.facility_address_2}]: ").strip() or existing_record.facility_address_2
+                    facility_address_3 = input(
+                        f"Address Line 3 [{existing_record.facility_address_3}]: ").strip() or existing_record.facility_address_3
+                    max_children = input(
+                        f"Max Children [{existing_record.max_children}]: ").strip() or existing_record.max_children
+                    max_infants = input(
+                        f"Max Infants [{existing_record.max_infants}]: ").strip() or existing_record.max_infants
+                    max_preschool = input(
+                        f"Max Preschool [{existing_record.max_preschool}]: ").strip() or existing_record.max_preschool
+                    max_school_age = input(
+                        f"Max School Age [{existing_record.max_school_age}]: ").strip() or existing_record.max_school_age
+                    language = input(f"Language [{existing_record.language}]: ").strip() or existing_record.language
+                    operator_id = input(
+                        f"Operator ID [{existing_record.operator_id}]: ").strip() or existing_record.operator_id
+                    designated_facility = input(
+                        f"Designated Facility [{existing_record.designated_facility}]: ").strip() or existing_record.designated_facility
+
+                    # Convert numerical fields safely
+                    try:
+                        max_children = int(max_children)
+                        max_infants = int(max_infants)
+                        max_preschool = int(max_preschool)
+                        max_school_age = int(max_school_age)
+                    except ValueError:
+                        print("Error: Max values must be numbers.")
+                        continue
+
+                    # Create and update the record
+                    updated_record = Record(
+                        region, district, license_number, facility_name, facility_type,
+                        facility_address_1, facility_address_2, facility_address_3,
+                        max_children, max_infants, max_preschool, max_school_age,
+                        language, operator_id, designated_facility
+                    )
+
+                    data_manager.update_record(index, updated_record)  # Update the record in data manager
+                    print("Record updated successfully.")
+                else:
+                    print("Error: Index out of range.")  # Handle invalid index input
+            except ValueError:
+                print("Error: Invalid index.")  # Handle invalid input for index
+
+        # Handle 'save Record' option
+        elif choice == "5":
+            try:
+                data_manager.save_records()  # Save any changes made
+                print("Data saved successfully.")
+            except Exception as e:
+                print(f"Error saving data: {e}")
+            print("Exiting program.")  # Print exit message
+            break
+
 # Run the program if this file is executed directly
 if __name__ == "__main__":
     main()

@@ -50,9 +50,8 @@ def main():
                 print(f"Error loading file: {e}")
 
         # Handle 'Save Data' option
-       # elif choice == "2":
-            #data_manager.save_records()  # Save records to the file
-                #print("Data saved successfully.")  # Success message
+       #elif choice == "2":
+            #print("Data saved successfully.")  # Success message
             #except Exception as e:  # Handle exceptions during saving
                 #print(f"Error saving data: {e}")
 

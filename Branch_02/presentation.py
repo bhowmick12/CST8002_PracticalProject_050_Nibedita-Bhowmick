@@ -41,6 +41,8 @@ def main():
         if choice == "1":
             file_path  = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
             #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
+            #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test_03.csv"
+            #print(f"File loaded file: {file_path}")
 
             # file_path = input("Enter the CSV file path: ").strip()  # Ask for file path
             try:
@@ -57,7 +59,7 @@ def main():
                     print("No records available.")  # No records available message
                 else:
                     # Display up to 100 records
-                    for i, record in enumerate(data_manager.records[:100], start=1):
+                    for i, record in enumerate(data_manager.records[:105], start=1):
                         print(f"{i}. {record}")  # Print each record
                         if i % 10 == 0:  # Print author name after every 10 records
                             display_full_name()
@@ -185,6 +187,34 @@ def main():
                 print(f"Error saving data: {e}")
             print("Exiting program.")  # Print exit message
             break
+
+            # Handle 'delete Record' option
+        elif choice == "6":
+            try:
+                index = int(input("Enter record index to delete: ")) - 1  # Convert input to zero-based index
+
+                if 0 <= index < len(data_manager.records):  # Check if index is valid
+                    deleted_record = data_manager.records.pop(index)  # Remove the record
+                    print(f"Record deleted successfully: {deleted_record}")
+
+                    # Save updated records to file
+                    data_manager.save_records()
+                    print("Changes saved successfully.")
+                else:
+                    print("Error: Index out of range.")  # Handle out-of-range index
+
+            except ValueError:
+                print("Error: Invalid index. Please enter a number.")  # Handle invalid input
+
+
+        # Handle 'Exit' option
+        elif choice == "7":
+            print("Exiting program.")  # Print exit message
+            break
+
+        else:
+            print("Invalid choice. Please try again.")  # Handle invalid input
+
 
 # Run the program if this file is executed directly
 if __name__ == "__main__":

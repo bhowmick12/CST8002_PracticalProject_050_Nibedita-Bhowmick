@@ -9,16 +9,17 @@
 # ------------------------------------------------------
 
 # Importing necessary modules
-from business import DataManager  # Manages the data (loading, saving, etc.)
+from business import Business  # Manages the data (loading, saving, etc.)
 from record import Record  # Represents a single record
 
 # Function to display the main menu to the user
 def display_menu():
     print("1. Load Data")  # Option to load data
-    print("2. Save Data")  # Option to save data
-    print("3. Display Records")  # Option to display all records
-    print("4. Add New Record")  # Option to add a new record
-    print("5. Update Record")  # Option to update an existing record
+   # print("2. Save Data")  # Option to save data
+    print("2. Display Records")  # Option to display all records
+    print("3. Add New Record")  # Option to add a new record
+    print("4. Update Record")  # Option to update an existing record
+    print("5. Save Record")  # Option to save record
     print("6. Delete Record")  # Option to delete an existing record
     print("7. Exit")  # Option to exit the program
 
@@ -28,7 +29,7 @@ def display_full_name():
 
 # Main function that runs the program
 def main():
-    data_manager = DataManager()  # Initialize DataManager object to handle records
+    data_manager = Business()  # Initialize DataManager object to handle records
 
     # Continuously display the menu until the user chooses to exit
     while True:
@@ -38,7 +39,10 @@ def main():
 
         # Handle 'Load Data' option
         if choice == "1":
-            file_path = input("Enter the CSV file path: ").strip()  # Ask for file path
+            #file_path  = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+            file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
+
+           #file_path = input("Enter the CSV file path: ").strip()  # Ask for file path
             try:
                 data_manager.load_records(file_path)  # Load records from the file
                 print("Data loaded successfully.")  # Success message
@@ -46,27 +50,26 @@ def main():
                 print(f"Error loading file: {e}")
 
         # Handle 'Save Data' option
-        elif choice == "2":
-            try:
-                data_manager.save_records()  # Save records to the file
-                print("Data saved successfully.")  # Success message
-            except Exception as e:  # Handle exceptions during saving
-                print(f"Error saving data: {e}")
+       # elif choice == "2":
+            #data_manager.save_records()  # Save records to the file
+                #print("Data saved successfully.")  # Success message
+            #except Exception as e:  # Handle exceptions during saving
+                #print(f"Error saving data: {e}")
 
         # Handle 'Display Records' option
-        elif choice == "3":
+        elif choice == "2":
             # Check if there are any records to display
             if not data_manager.records:
                 print("No records available.")  # No records available message
             else:
                 # Display up to 100 records
-                for i, record in enumerate(data_manager.records[:100], start=1):
+                for i, record in enumerate(data_manager.records[:20], start=1):
                     print(f"{i}. {record}")  # Print each record
                     if i % 10 == 0:  # Print author name after every 10 records
                         display_full_name()
 
         # Handle 'Add New Record' option
-        elif choice == "4":
+        elif choice == "3":
             # Collect user input for a new record
             region = input("Region: ").strip()
             district = input("District: ").strip()
@@ -115,7 +118,7 @@ def main():
             print("New record added successfully.")
 
         # Handle 'Update Record' option
-        elif choice == "5":
+        elif choice == "4":
             try:
                 # Get the index of the record to update
                 index = int(input("Enter record index to update: ")) - 1
@@ -166,8 +169,8 @@ def main():
             except ValueError:
                 print("Error: Invalid index.")  # Handle invalid input for index
 
-        # Handle 'Delete Record' option
-        elif choice == "6":
+        # Handle 'save Record' option
+        elif choice == "5":
             try:
                 data_manager.save_records()  # Save any changes made
                 print("Data saved successfully.")
@@ -175,6 +178,24 @@ def main():
                 print(f"Error saving data: {e}")
             print("Exiting program.")  # Print exit message
             break
+            # Handle 'delete Record' option
+        elif choice == "6":
+            try:
+                index = int(input("Enter record index to delete: ")) - 1  # Convert input to zero-based index
+
+                if 0 <= index < len(data_manager.records):  # Check if index is valid
+                    deleted_record = data_manager.records.pop(index)  # Remove the record
+                    print(f"Record deleted successfully: {deleted_record}")
+
+                    # Save updated records to file
+                    data_manager.save_records()
+                    print("Changes saved successfully.")
+                else:
+                    print("Error: Index out of range.")  # Handle out-of-range index
+
+            except ValueError:
+                print("Error: Invalid index. Please enter a number.")  # Handle invalid input
+
 
         # Handle 'Exit' option
         elif choice == "7":

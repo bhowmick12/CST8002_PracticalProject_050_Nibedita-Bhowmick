@@ -1,29 +1,69 @@
-class DataManager:
-    """Manages records and implements sorting functionality."""
+from persistence import load_data, save_data, generate_output_filename
+from record import Record
+
+
+class Business:
+    """
+    The Business class is responsible for managing a collection of records.
+    It provides methods to load, save, add, update, delete, retrieve, and sort records.
+    """
 
     def __init__(self):
-        self.records = []  # Using a list to store records
+        """Initializes the Business class with an empty list of records."""
+        self.records = []
+
+    def load_records(self, file_path):
+        """
+        Loads records from a specified file and stores them in the records list.
+
+        :param file_path: (str) Path to the file containing stored records.
+        """
+        self.records = load_data(file_path)  # Load data from the specified CSV file
+
+    def save_records(self):
+        """
+        Saves the current list of records to a new output file.
+        The filename is generated dynamically.
+        """
+        output_filename = generate_output_filename()  # Generate a unique output filename
+        save_data(self.records, output_filename)  # Save records to the generated file
+        print(f"✅ Data saved to {output_filename}")  # Inform the user where the data was saved
 
     def add_record(self, record):
-        """Adds a new record to the list."""
+        """Adds a new record to the records list."""
         self.records.append(record)
 
-    def sort_records(self, column):
-        """Sorts records based on a given column."""
-        column_map = {
-            "region": lambda r: r.region.lower(),
-            "district": lambda r: r.district.lower(),
-            "facility_name": lambda r: r.facility_name.lower(),
-            "max_children": lambda r: int(r.max_children)  # Ensure numerical sorting
-        }
+    def update_record(self, index, updated_record):
+        """Updates an existing record at the given index with a new record."""
+        if 0 <= index < len(self.records):
+            self.records[index] = updated_record
 
-        if column in column_map:
-            self.records.sort(key=column_map[column])
-            print(f"Records sorted by {column}.")
-        else:
-            print("Invalid column name. Cannot sort.")
+    def delete_record(self, index):
+        """Deletes a record from the records list at the specified index."""
+        if 0 <= index < len(self.records):
+            del self.records[index]
 
-    def display_records(self):
-        """Displays all records in sorted order."""
-        for record in self.records:
-            print(record.display_info())
+    def get_record(self, index):
+        """Retrieves a record from the records list at the specified index."""
+        return self.records[index] if 0 <= index < len(self.records) else None
+
+    def sort_records(self, sort_key):
+        """
+        Sorts records based on a specified attribute.
+
+        :param sort_key: (str) The attribute name to sort by.
+        """
+        try:
+            # Ensure there are records to sort
+            if not self.records:
+                print("⚠ No records to sort.")
+                return
+
+            # Check if the attribute exists in Record objects
+            if hasattr(self.records[0], sort_key):  # Check if the attribute exists in the Record class
+                self.records.sort(key=lambda record: getattr(record, sort_key))
+                print(f"✅ Records sorted successfully by '{sort_key}'.")
+            else:
+                print(f"❌ Error: Invalid attribute '{sort_key}' for sorting.")
+        except Exception as e:
+            print(f"❌ Unexpected error while sorting: {e}")

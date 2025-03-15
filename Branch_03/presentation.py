@@ -1,19 +1,22 @@
 # ------------------------------------------------------
 # Filename: presentation.py
 # Author: Nibedita Bhowmick
-# Date: 2025-02-12
+# Due date: 2025-03-16
 # Version: 2.3
 # Description:
 #     This script manages records for a childcare facility system.
-#     It allows the user to load, save, display, add, update, delete, and sort records.
+#     It provides an interactive menu for loading, displaying, adding,
+#     updating, deleting, sorting, and saving records.
 # ------------------------------------------------------
 
 from business import Business  # Handles record operations
-from record import Record  # Represents a single record
+from record import Record  # Represents a single childcare facility record
 
 
 def display_menu():
-    """Displays the menu options."""
+    """
+    Displays the main menu options to the user.
+    """
     print("\n--- Childcare Records Management ---")
     print("1. Load Data")
     print("2. Display Records")
@@ -26,25 +29,33 @@ def display_menu():
 
 
 def display_full_name():
-    """Displays the author's full name."""
+    """
+    Displays the author's name as part of program branding.
+    """
     print("Program by Nibedita Bhowmick")
 
 
 def display_records(business):
-    """Display all records."""
+    """
+    Displays the currently stored records.
+
+    :param business: (Business) The business logic layer instance.
+    """
     if not business.records:
         print("⚠ No records available.")
     else:
         print("\nDisplaying records:")
-        for i, record in enumerate(business.records[:100], start=1):
-            print(f"{i}. {record}")  # Uses `__str__()` for display
-            if i % 10 == 0:
+        for i, record in enumerate(business.records[:100], start=1):  # Limits output to 100 records
+            print(f"{i}. {record}")  # Uses `__str__()` method of the Record class
+            if i % 10 == 0:  # Display author info every 10 records
                 display_full_name()
 
 
 def main():
-    """Main function handling user interactions."""
-    business = Business()  # Initialize the business layer
+    """
+    Main function that handles user interaction via a menu-driven interface.
+    """
+    business = Business()  # Initialize the business logic layer
 
     while True:
         display_full_name()
@@ -52,10 +63,8 @@ def main():
         choice = input("Select an option: ").strip()
 
         if choice == "1":
-            # Load data from the CSV file
-            #file_path = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+            # Load data from the specified CSV file
             file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
-            #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test_03.csv"
             try:
                 business.load_records(file_path)
                 print("✅ Data loaded successfully.")
@@ -85,6 +94,7 @@ def main():
                 operator_id = input("Operator ID: ").strip()
                 designated_facility = input("Designated Facility (Yes/No): ").strip().lower() == "yes"
 
+                # Create and add the new record
                 new_record = Record(
                     region, district, license_number, facility_name, facility_type,
                     facility_address_1, facility_address_2, facility_address_3,
@@ -94,7 +104,7 @@ def main():
                 business.add_record(new_record)
                 print("✅ New record added successfully.")
             except ValueError:
-                print("❌ Error: Max Children, Max Infants, Max Preschool, and Max School Age must be numbers.")
+                print("❌ Error: Numeric fields must contain valid numbers.")
 
         elif choice == "4":
             # Update an existing record
@@ -134,39 +144,26 @@ def main():
                 print("❌ Error: Invalid index.")
 
         elif choice == "5":
+            # Delete a record
             index = int(input("Enter record index to delete: ")) - 1
             business.delete_record(index)
             print("✅ Record deleted successfully.")
 
         elif choice == "6":
-            # Sorting functionality
-            print("\nSorting options:")
-            print("1. Region")
-            print("2. District")
-            print("3. Facility Name")
-            print("4. Max Children")
-
+            # Sort records
+            sort_options = {"1": "region", "2": "district", "3": "facility_name", "4": "max_children"}
+            print("\nSorting options:\n1. Region\n2. District\n3. Facility Name\n4. Max Children")
             sort_choice = input("Choose a column to sort by (1-4): ").strip()
 
-            column_map = {
-                "1": "region",
-                "2": "district",
-                "3": "facility_name",
-                "4": "max_children"
-            }
-
-            if sort_choice in column_map:
+            if sort_choice in sort_options:
                 try:
-                    business.sort_records(column_map[sort_choice])
-                    print(f"✅ Records sorted successfully by '{column_map[sort_choice]}'.")
-                    display_records(business)  # Display the sorted records
-
-                except AttributeError:
-                    print(f"❌ Error: Attribute '{column_map[sort_choice]}' not found in records.")
+                    business.sort_records(sort_options[sort_choice])
+                    print(f"✅ Records sorted by '{sort_options[sort_choice]}'.")
+                    display_records(business)  # Show sorted records
                 except Exception as e:
-                    print(f"❌ Unexpected error: {e}")
+                    print(f"❌ Error: {e}")
             else:
-                print("❌ Invalid selection. Please enter a number between 1 and 4.")
+                print("❌ Invalid selection.")
 
         elif choice == "7":
             business.save_records()

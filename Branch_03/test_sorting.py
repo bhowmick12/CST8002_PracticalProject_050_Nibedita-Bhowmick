@@ -1,7 +1,7 @@
 # ------------------------------------------------------
 # Filename: test_sorting.py
 # Author: Nibedita Bhowmick
-# Due date: 2025-03-16
+# Due Date: 2025-03-16
 # Version: 1.1
 # Description:
 #     This module contains unit tests for verifying the sorting functionality

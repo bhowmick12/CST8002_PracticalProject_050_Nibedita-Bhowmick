@@ -1,8 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-
-
 # Model: Handles data loading and processing
 class CSVModel:
     def __init__(self, file_path):
@@ -145,6 +143,8 @@ class CSVController:
             chart_choice = "2"
 
         self.view.display_chart(chart_data, chart_types[chart_choice], f"{category_column} vs {value_column}")
+
+
 
 
 # Main Program Execution

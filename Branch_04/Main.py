@@ -41,6 +41,12 @@ class CSVModel:
             print(f"❌ Invalid column(s) selected: {category_column}, {value_column}")
             return None
 
+        try:
+            grouped_data = self.df.groupby(category_column)[value_column].sum()
+            return grouped_data if not grouped_data.empty else None
+        except Exception as e:
+            print(f"❌ Error while grouping data: {e}")
+            return None
 
 
 # View: Handles displaying output
@@ -61,6 +67,18 @@ class CSVView:
             return
 
         plt.figure(figsize=(10, 6))
+        try:
+            if chart_type == "barh":
+                chart_data.plot(kind="barh", color="skyblue")
+            elif chart_type == "bar":
+                chart_data.plot(kind="bar", color="coral")
+            elif chart_type == "pie":
+                chart_data.plot(kind="pie", autopct='%1.1f%%', startangle=90, colormap='viridis')
+
+            plt.title(title)
+            plt.show()
+        except Exception as e:
+            print(f"⚠️ Error displaying chart: {e}")
 
 
 # Controller: Manages user interaction

@@ -164,4 +164,39 @@ class CSVController:
         """Handles chart generation logic"""
         # Display available columns and prompt user for charting data
         print("\n📈 Available Columns:", ", ".join(self.model.get_columns()))
-        category
+        category_column = input("Enter column for categories: ").strip()
+        value_column = input("Enter column for values: ").strip()
+
+        print("\nChoose Chart Type:")
+        print("1. Horizontal Bar Chart")
+        print("2. Vertical Bar Chart")
+        print("3. Pie Chart")
+        chart_choice = input("Enter your choice: ").strip()
+
+        # Get the grouped data for chart generation
+        chart_data = self.model.group_data(category_column, value_column)
+        chart_types = {"1": "barh", "2": "bar", "3": "pie"}
+
+        # Default to vertical bar chart if invalid choice is made
+        if chart_choice not in chart_types:
+            print("❌ Invalid choice. Defaulting to Vertical Bar Chart.")
+            chart_choice = "2"
+
+        self.view.display_chart(chart_data, chart_types[chart_choice], f"{category_column} vs {value_column}")
+
+
+# Main Program Execution
+if __name__ == "__main__":
+    # Define the file path to the CSV file
+    # file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
+    # file_path = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+    file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test_03.csv"
+
+    try:
+        # Initialize the model, view, and controller
+        model = CSVModel(file_path)
+        view = CSVView()
+        controller = CSVController(model, view)
+        controller.run()  # Start the program loop
+    except FileNotFoundError as e:
+        print(e)  # Handle the case when the file is not found

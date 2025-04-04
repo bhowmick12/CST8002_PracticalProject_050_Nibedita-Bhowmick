@@ -9,64 +9,41 @@
 #     updating, deleting, sorting, and saving records.
 # ------------------------------------------------------
 
-import pandas as pd  # Importing pandas for data manipulation and analysis
-import matplotlib.pyplot as plt  # Importing matplotlib for chart plotting
-import os  # Importing os module for file path and file existence handling
-
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
 
 # Model: Handles data loading and processing
 class CSVModel:
     def __init__(self, file_path):
-        # Check if the file exists at the given path, raise error if not
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"❌ File not found: {file_path}")
-
-        # Store the file path and load the CSV data into a pandas DataFrame
         self.file_path = file_path
         self.df = pd.read_csv(file_path)
 
     def filter_records(self, column, value):
-        """
-        Filter records based on user input.
-        Checks if the column exists and applies a case-insensitive filter.
-        """
         if column not in self.df.columns:
             print(f"❌ Invalid column: {column}")
-            return pd.DataFrame()  # Return an empty DataFrame for invalid column
-
-        # Filter rows where the value in the given column matches the search value
+            return pd.DataFrame()
         filtered_data = self.df[self.df[column].astype(str).str.contains(value, case=False, na=False)]
-        return filtered_data if not filtered_data.empty else pd.DataFrame([["No matching records found"]],
-                                                                          columns=[column])
+        return filtered_data if not filtered_data.empty else pd.DataFrame([["No matching records found"]], columns=[column])
 
     def sort_records(self, columns, ascending):
-        """
-        Sort records based on one or more columns in ascending or descending order.
-        """
-        # Check if all the provided columns are valid
         invalid_columns = [col for col in columns if col not in self.df.columns]
         if invalid_columns:
             print(f"❌ Invalid column(s): {', '.join(invalid_columns)}")
-            return self.df  # Return the DataFrame as it is in case of invalid columns
-
-        # Sort the DataFrame based on the provided columns
+            return self.df
         return self.df.sort_values(by=columns, ascending=ascending)
 
     def get_columns(self):
-        """Return a list of available columns in the dataset."""
         return self.df.columns.tolist()
 
     def group_data(self, category_column, value_column):
-        """
-        Group data for visualization purposes.
-        Groups by a category and sums the values in the specified value column.
-        """
         if category_column not in self.df.columns or value_column not in self.df.columns:
             print(f"❌ Invalid column(s) selected: {category_column}, {value_column}")
             return None
-
         try:
-            # Group data by category and sum the corresponding values
             grouped_data = self.df.groupby(category_column)[value_column].sum()
             return grouped_data if not grouped_data.empty else None
         except Exception as e:
@@ -74,129 +51,124 @@ class CSVModel:
             return None
 
 
-# View: Handles displaying output to the user
+import textwrap
+
 class CSVView:
     @staticmethod
-    def display_dataframe(df):
-        """Display the DataFrame in a readable format."""
-        if df.empty:
-            print("\n⚠️ No results found.")
-        else:
-            print(df.to_string(index=False))  # Print the DataFrame without row indices
-
-    @staticmethod
     def display_chart(chart_data, chart_type, title):
-        """
-        Display a chart based on the provided data and chart type.
-        Supports barh, bar, and pie charts.
-        """
         if chart_data is None or chart_data.empty:
             print("⚠️ Cannot generate chart: No valid data available.")
             return
 
-        plt.figure(figsize=(10, 6))  # Set the figure size for the chart
+        labels = chart_data.index.tolist()
+        values = chart_data.values.tolist()
+        plt.close('all')
+        fig, ax = plt.subplots(figsize=(10, 6))
+        colors = sns.color_palette("colorblind", len(labels))
+
+        # Function to wrap long text labels
+        def wrap_labels(labels, width=15):
+            return ['\n'.join(textwrap.wrap(label, width)) if isinstance(label, str) else label for label in labels]
+
         try:
-            # Plot the chart based on the user's selection
             if chart_type == "barh":
-                chart_data.plot(kind="barh", color="pink")  # Horizontal bar chart
+                wrapped_labels = wrap_labels(labels)
+                plt.barh(wrapped_labels, values, color=colors)
+                plt.xlabel("Count", fontsize=14, fontweight='bold', color='black')
+                plt.ylabel("Categories", fontsize=14, fontweight='bold', color='black')
             elif chart_type == "bar":
-                chart_data.plot(kind="bar", color="coral")  # Vertical bar chart
+                wrapped_labels = wrap_labels(labels)
+                plt.bar(wrapped_labels, values, color=colors)
+                plt.xlabel("Categories", fontsize=14, fontweight='bold', color='black')
+                plt.ylabel("Count", fontsize=14, fontweight='bold', color='black')
             elif chart_type == "pie":
-                chart_data.plot(kind="pie", autopct='%1.1f%%', startangle=90, colormap='viridis')  # Pie chart
+                wrapped_labels = wrap_labels(labels, width=12
+                                             )  # Adjust width for readability
+                wedges, texts, autotexts = ax.pie(values, labels=wrapped_labels, autopct='%1.1f%%',
+                                                  startangle=90, colors=colors,
+                                                  textprops={'fontsize': 10, 'color': 'black'})
 
-            plt.title(title)  # Set the title of the chart
-            plt.show()  # Display the chart
+                # Adjust font weight for better visibility
+                for text in texts + autotexts:
+                    text.set_fontweight('bold')
+
+                plt.axis("equal")  # Ensures the pie chart remains circular
+
+                # Adjust layout to create more space
+                plt.subplots_adjust(top=0.8)  # Moves the title higher
+                ax.set_title(title, fontsize=16, fontweight='bold', color='black', pad=30)  # Adds extra padding
+
+            plt.show()
         except Exception as e:
-            print(f"⚠️ Error displaying chart: {e}")  # Handle any errors during chart creation
+            print(f"⚠️ Error displaying chart: {e}")
 
 
-# Controller: Manages user interaction and ties together the model and view
+# Controller: Manages user interaction
 class CSVController:
     def __init__(self, model, view):
-        # Initialize the model (data handler) and view (output display)
         self.model = model
         self.view = view
 
     def run(self):
-        """Main loop for displaying menu and handling user choices."""
         while True:
-            # Display the menu options to the user
             print("\n📊 CSV Data Processing - Select an Option:")
             print("1. Filter Records")
             print("2. Sort Records")
             print("3. Generate Charts")
             print("4. Exit")
             choice = input("Enter your choice: ").strip()
-
-            # Handle user input for different operations
             if choice == "1":
-                self.filter_records()  # Call method to filter records
+                self.filter_records()
             elif choice == "2":
-                self.sort_records()  # Call method to sort records
+                self.sort_records()
             elif choice == "3":
-                self.generate_chart()  # Call method to generate charts
+                self.generate_chart()
             elif choice == "4":
                 print("✅ Exiting program. Goodbye!")
-                break  # Exit the program
+                break
             else:
                 print("❌ Invalid choice. Please try again.")
 
     def filter_records(self):
-        """Handles filtering logic"""
-        # Display available columns and prompt user for filtering criteria
         print("\n🔍 Available Columns:", ", ".join(self.model.get_columns()))
         column = input("Enter column name to filter by: ").strip()
         value = input(f"Enter value to search in '{column}': ").strip()
         filtered_df = self.model.filter_records(column, value)
-        self.view.display_dataframe(filtered_df)
+        print(filtered_df)
 
     def sort_records(self):
-        """Handles sorting logic"""
-        # Display available columns and prompt user for sorting criteria
         print("\n📑 Available Columns:", ", ".join(self.model.get_columns()))
         columns = input("Enter columns to sort by (comma-separated): ").strip().split(',')
-        columns = [col.strip() for col in columns]  # Strip any extra spaces
+        columns = [col.strip() for col in columns]
         ascending = input("Sort in ascending order? (yes/no): ").strip().lower() == "yes"
         sorted_df = self.model.sort_records(columns, ascending)
-        self.view.display_dataframe(sorted_df)
+        print(sorted_df)
 
     def generate_chart(self):
-        """Handles chart generation logic"""
-        # Display available columns and prompt user for charting data
         print("\n📈 Available Columns:", ", ".join(self.model.get_columns()))
         category_column = input("Enter column for categories: ").strip()
         value_column = input("Enter column for values: ").strip()
-
         print("\nChoose Chart Type:")
         print("1. Horizontal Bar Chart")
         print("2. Vertical Bar Chart")
         print("3. Pie Chart")
         chart_choice = input("Enter your choice: ").strip()
-
-        # Get the grouped data for chart generation
         chart_data = self.model.group_data(category_column, value_column)
         chart_types = {"1": "barh", "2": "bar", "3": "pie"}
-
-        # Default to vertical bar chart if invalid choice is made
         if chart_choice not in chart_types:
             print("❌ Invalid choice. Defaulting to Vertical Bar Chart.")
             chart_choice = "2"
-
         self.view.display_chart(chart_data, chart_types[chart_choice], f"{category_column} vs {value_column}")
 
-
-# Main Program Execution
 if __name__ == "__main__":
-    # Define the file path to the CSV file
+    file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test_03.csv"
     # file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
     # file_path = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
-    file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test_03.csv"
 
     try:
-        # Initialize the model, view, and controller
         model = CSVModel(file_path)
         view = CSVView()
         controller = CSVController(model, view)
-        controller.run()  # Start the program loop
+        controller.run()
     except FileNotFoundError as e:
-        print(e)  # Handle the case when the file is not found
+        print(e)

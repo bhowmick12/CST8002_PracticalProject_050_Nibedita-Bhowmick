@@ -45,7 +45,7 @@ def display_records(business):
         print("⚠ No records available.")
     else:
         print("\nDisplaying records:")
-        for i, record in enumerate(business.records[:100], start=1):  # Limits output to 100 records
+        for i, record in enumerate(business.records[:1000], start=1):  # Limits output to 100 records
             print(f"{i}. {record}")  # Uses `__str__()` method of the Record class
             if i % 10 == 0:  # Display author info every 10 records
                 display_full_name()
@@ -64,7 +64,13 @@ def main():
 
         if choice == "1":
             # Load data from the specified CSV file
-            file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
+            #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test01.csv"
+            file_path = "C:\\Licensed_Early_Learning_and_Childcare_Facilities.csv"
+            #file_path = "C:\\Users\\Nibedita\\OneDrive - Algonquin College\\Documents\\Test_03.csv"
+            # print(f"File loaded file: {file_path}")
+            # Handle 'Load Data' option
+
+
             try:
                 business.load_records(file_path)
                 print("✅ Data loaded successfully.")
@@ -74,6 +80,7 @@ def main():
         elif choice == "2":
             # Display all records
             display_records(business)
+
 
         elif choice == "3":
             # Add a new record
